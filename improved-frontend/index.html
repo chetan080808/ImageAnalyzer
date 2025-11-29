@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .upload-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            border-color: #764ba2;
+            background: linear-gradient(135deg, #f0f0ff 0%, #e0e0ff 100%);
+            transform: translateY(-2px);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .file-input-label:active {
+            transform: translateY(-1px);
+        }
+
+        .file-name {
+            margin-top: 15px;
+            color: #555;
+            font-style: italic;
+            min-height: 24px;
+        }
+
+        .image-preview {
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+
+        .image-preview.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 500px; }
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border: 3px solid #667eea;
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .analyze-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(245, 87, 108, 0.6);
+        }
+
+        .analyze-btn:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .analyze-btn:disabled {
+            background: linear-gradient(135deg, #ccc 0%, #999 100%);
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.6;
+        }
+
+        .results-section {
+            margin-top: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            display: none;
+            border: 2px solid #667eea;
+        }
+
+        .results-section.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .results-title {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .label-item {
+            background: white;
+            padding: 20px;
+            margin: 12px 0;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+
+        .label-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .label-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.2em;
+        }
+
+        .label-confidence {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: none;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.3em;
+            margin: 20px 0;
+            display: none;
+            font-weight: bold;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .emoji {
+            font-size: 1.3em;
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .upload-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="emoji">🤖</span>AI Image Analyzer</h1>
+        <p class="subtitle">Upload an image and let Amazon Rekognition identify objects with AI</p>
+
+        <div class="upload-section">
+            <div class="file-input-wrapper">
+                <input type="file" id="imageInput" accept="image/*" onchange="handleFileSelect(event)">
+                <label for="imageInput" class="file-input-label">
+                    <span class="emoji">📁</span>Choose Image
+                </label>
+            </div>
+            <div class="file-name" id="fileName">No file selected</div>
+        </div>
+
+        <div class="image-preview" id="imagePreview">
+            <img id="previewImage" alt="Image Preview">
+        </div>
+
+        <button class="analyze-btn" id="analyzeBtn" onclick="analyzeImage()" disabled>
+            <span class="emoji">🔍</span>Analyze Image
+        </button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Analyzing your image with AI...</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="results-section" id="resultsSection">
+            <h2 class="results-title"><span class="emoji">✨</span>Detection Results</h2>
+            <div id="resultsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // REPLACE WITH YOUR API GATEWAY URL
+        const apiUrl = "https://geitdg603a.execute-api.us-east-1.amazonaws.com";
+
+        let selectedImage = null;
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    showError('Please select a valid image file');
+                    return;
+                }
+
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    showError('Image size must be less than 5MB');
+                    return;
+                }
+
+                // Update file name display
+                document.getElementById('fileName').textContent = file.name;
+
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('previewImage');
+                    preview.src = e.target.result;
+                    document.getElementById('imagePreview').classList.add('show');
+                    selectedImage = e.target.result;
+
+                    // Enable analyze button
+                    document.getElementById('analyzeBtn').disabled = false;
+                };
+                reader.readAsDataURL(file);
+
+                // Hide previous results
+                document.getElementById('resultsSection').classList.remove('show');
+                document.getElementById('errorMessage').classList.remove('show');
+            }
+        }
+
+        async function analyzeImage() {
+            if (!selectedImage) {
+                showError('Please select an image first!');
+                return;
+            }
+
+            // Show loading, hide previous results
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('resultsSection').classList.remove('show');
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('analyzeBtn').disabled = true;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ image: selectedImage })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.labels) {
+                    displayResults(data.labels);
+                } else {
+                    showError(data.error || 'Failed to analyze image. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Network error: ' + error.message);
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+                document.getElementById('analyzeBtn').disabled = false;
+            }
+        }
+
+        function displayResults(labels) {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '';
+
+            if (!labels || labels.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; font-size: 1.1em;">No objects detected in the image</p>';
+            } else {
+                labels.forEach((label, index) => {
+                    const labelDiv = document.createElement('div');
+                    labelDiv.className = 'label-item';
+                    labelDiv.style.animationDelay = `${index * 0.1}s`;
+                    labelDiv.innerHTML = `
+                        <span class="label-name">${label.Name}</span>
+                        <span class="label-confidence">${label.Confidence.toFixed(1)}%</span>
+                    `;
+                    container.appendChild(labelDiv);
+                });
+            }
+
+            document.getElementById('resultsSection').classList.add('show');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = '⚠️ ' + message;
+            errorDiv.classList.add('show');
+
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                errorDiv.classList.remove('show');
+            }, 5000);
+        }
+
+        // Allow drag and drop
+        const uploadSection = document.querySelector('.upload-section');
+
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.style.borderColor = '#764ba2';
+            uploadSection.style.background = 'linear-gradient(135deg, #f0f0ff 0%, #e0e0ff 100%)';
+        });
+
+        uploadSection.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadSection.style.borderColor = '#667eea';
+            uploadSection.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
+        });
+
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.style.borderColor = '#667eea';
+            uploadSection.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
+
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                const input = document.getElementById('imageInput');
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                input.files = dataTransfer.files;
+
+                handleFileSelect({ target: input });
+            }
+        });
+    </script>
+</body>
+</html>
