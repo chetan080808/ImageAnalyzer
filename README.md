@@ -15,6 +15,8 @@ Perfect for students, beginners, and anyone learning AWS & serverless developmen
 - 🧠 Backend processing with **AWS Lambda (Python)**
 - 🌐 Fully serverless, scalable, and free-tier compatible
 - 🔓 CORS-enabled communication between S3 and API Gateway
+- 🎨 Modern, responsive UI with image preview
+- ⚡ Real-time AI analysis with confidence scores
 
 ---
 
@@ -39,10 +41,18 @@ JSON Response to Browser
 ## 📦 Project Structure
 
 ```
-├── index.html               # Frontend UI (upload + analyze button)
+├── index.html               # Frontend UI (modern design + image preview)
 ├── lambda_function.py       # Lambda backend (Rekognition logic + CORS)
 └── README.md                # Full setup guide
 ```
+
+---
+
+## 🎥 Project Walkthrough
+
+> **📹 YouTube Tutorial:** [Watch the complete walkthrough](#) *(Coming Soon)*
+
+> **💼 LinkedIn Post:** [Read about my learnings](#) *(Coming Soon)*
 
 ---
 
@@ -59,7 +69,7 @@ Follow these instructions to build the entire system from scratch.
 2. Set:
    - Bucket name: must be globally unique  
    - Region: same region you plan to use for Lambda & API Gateway
-3. **Uncheck** “Block all public access”
+3. **Uncheck** "Block all public access"
 4. Create bucket
 
 ---
@@ -121,7 +131,7 @@ AWS Console → **Lambda → Create function**
 
 - Author from scratch  
 - Name: `image-analyzer`
-- Runtime: **Python 3.9 or Python 3.10**
+- Runtime: **Python 3.10**
 
 ---
 
@@ -223,10 +233,11 @@ curl -i -X POST "<API_URL>"   -H "Content-Type: application/json"   -d '{"image"
 
 # 🧩 Troubleshooting
 
-### ❌ “Failed to fetch”
+### ❌ "Failed to fetch"
 - CORS not configured properly  
 - Static website not served from S3  
 - Lambda not handling OPTIONS requests
+- Wrong API URL in `index.html`
 
 ### ❌ Rekognition Access Denied
 Add IAM policy:  
@@ -236,10 +247,16 @@ Add IAM policy:
 Check:
 - Route exists  
 - Integration attached  
-- API deployed  
+- API deployed to `$default` stage
+- Stage is enabled (not disabled)
 
-### ❌ S3 says “Access Denied”
+### ❌ S3 says "Access Denied"
 Fix bucket policy OR enable object public access.
+
+### ❌ 404 Not Found on API
+- Ensure you're using `$default` stage URL
+- Check if `prod` stage is disabled
+- Remove `/prod` from URL if using HTTP API
 
 ---
 
@@ -255,17 +272,85 @@ Remove resources when finished:
 
 ---
 
-# 🌟 Next Steps / Extensions
+# 💰 Cost Estimation (AWS Free Tier)
 
-You can extend this project to:
-- Perform text extraction (OCR)
-- Detect emotions / faces (ethical usage!)
-- Save results to DynamoDB  
-- Add UI improvements  
-- Deploy frontend via CloudFront  
-- Create CI/CD using GitHub Actions + SAM/CDK  
+This project is designed to stay **completely within AWS Free Tier**.
 
+| Service | Free Tier Limit | Expected Usage | Cost |
+|---------|----------------|----------------|------|
+| **S3** | 5 GB storage, 20K GET, 2K PUT | ~5 MB, 100 requests/day | $0.00 |
+| **Lambda** | 1M requests, 400K GB-seconds | ~50 requests/day | $0.00 |
+| **API Gateway** | 1M requests/month | ~50 requests/day | $0.00 |
+| **Rekognition** | 5,000 images/month | ~50 images/day | $0.00 |
+| **CloudWatch** | 5 GB logs, 5 GB storage | Minimal | $0.00 |
+
+**Total Monthly Cost:** **$0.00** ✅
 
 ---
 
-### 🎉 You now have a fully working AI-powered serverless app on AWS!  
+# 🌟 Next Steps / Extensions
+
+You can extend this project to:
+
+### 🎯 Recommended Extensions
+- **Accessibility Helper** — Add text-to-speech for visually impaired users
+- **Smart Grocery Manager** — Identify food items and create inventory
+- **Plant Care Assistant** — Identify plants and provide care instructions
+- **Fashion Style Analyzer** — Detect clothing items and suggest outfits
+
+### 🔧 Technical Improvements
+- Perform text extraction (OCR)
+- Detect emotions / faces (ethical usage!)
+- Save results to DynamoDB  
+- Add user authentication (Cognito)
+- Batch image processing
+- Deploy frontend via CloudFront  
+- Create CI/CD using GitHub Actions + SAM/CDK  
+
+---
+
+# 🎓 What I Learned
+
+Building this project taught me:
+- Serverless architecture patterns
+- AWS service integration and orchestration
+- CORS configuration for secure cross-origin requests
+- IAM roles and security best practices
+- Cost optimization in AWS free tier
+- Modern frontend design with vanilla JavaScript
+- Debugging production issues (CORS, API Gateway stages)
+
+---
+
+# 👨‍💻 About Me
+
+**Chetan Namane**  
+DevOps Engineer | Cloud Enthusiast | AWS Learner
+
+Building projects to master AWS, Terraform, Docker, and DevOps practices.  
+Passionate about serverless architectures and cloud-native development.
+
+### 🔗 Connect With Me
+
+- 💼 **LinkedIn:** [Your Profile](#)
+- 🐙 **GitHub:** [chetan080808](https://github.com/chetan080808)
+- 📹 **YouTube:** [Your Channel](#)
+- 📧 **Email:** your-email@example.com
+
+---
+
+# 🙏 Acknowledgments
+
+- Original project inspiration: [YadneshN/ImageAnalyzer](https://github.com/YadneshN/ImageAnalyzer)
+- AWS Free Tier for making learning accessible
+- The DevOps and AWS communities
+
+---
+
+### 🎉 You now have a fully working AI-powered serverless app on AWS!
+
+---
+
+**Built with ❤️ using AWS Serverless Technologies**
+
+*Last Updated: November 30, 2025*
