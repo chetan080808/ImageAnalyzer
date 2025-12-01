@@ -24,7 +24,7 @@ Perfect for students, beginners, and anyone learning AWS & serverless developmen
 
 ## 🏗️ Architecture
 
-![Architecture Diagram](/Output%20images/image-analyzer.mp4)
+![Architecture Diagram](https://github.com/chetan080808/ImageAnalyzer/blob/main/Output%20images/image-analyzer.mp4)
 
 ### System Flow.
 
