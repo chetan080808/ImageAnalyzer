@@ -20,23 +20,36 @@ Perfect for students, beginners, and anyone learning AWS & serverless developmen
 
 ---
 
-## 🧱 Architecture Overview
+---
 
-```
-Browser 
-   ↓
-S3 Static Website Hosting
-   ↓
-API Gateway (HTTP API)
-   ↓
-Lambda (Python)
-   ↓
-Amazon Rekognition
-   ↓
-JSON Response to Browser
-```
+## 🏗️ Architecture
+
+![Architecture Diagram](/Output%20images/image-analyzer.mp4)
+
+### System Flow.
+
+1. **User** uploads an image through the web interface
+2. **Amazon S3** serves the static website and converts image to Base64
+3. **API Gateway** receives the POST request with encoded image data
+4. **AWS Lambda** processes the request:
+   - Decodes Base64 image
+   - Calls Amazon Rekognition API
+5. **Amazon Rekognition** analyzes the image using AI/ML
+6. **Lambda** formats the response with detected labels and confidence scores
+7. **API Gateway** returns JSON response to the browser
+8. **User** sees real-time analysis results with confidence percentages
+
+### AWS Services Used
+
+- **Amazon S3** - Static website hosting
+- **API Gateway** - RESTful API endpoint (HTTP API)
+- **AWS Lambda** - Serverless compute (Python 3.10)
+- **Amazon Rekognition** - AI-powered image analysis
+- **IAM** - Security and access management
+- **CloudWatch** - Logging and monitoring
 
 ---
+
 
 ## 📦 Project Structure
 
@@ -332,10 +345,10 @@ Passionate about serverless architectures and cloud-native development.
 
 ### 🔗 Connect With Me
 
-- 💼 **LinkedIn:** [Your Profile](#)
+- 💼 **LinkedIn:** [chetannamane](https://www.linkedin.com/in/chetan-namane/)
 - 🐙 **GitHub:** [chetan080808](https://github.com/chetan080808)
-- 📹 **YouTube:** [Your Channel](#)
-- 📧 **Email:** your-email@example.com
+- 📹 **YouTube:** [codewithchetan](https://youtu.be/YYDqEHEs69k)
+- 📧 **Email:** chetannamne2609@gmail.com
 
 ---
 
